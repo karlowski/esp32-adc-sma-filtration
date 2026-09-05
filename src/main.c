@@ -52,7 +52,6 @@ typedef struct
     float value_prev;
     int values[MOVING_AVERAGE_N];
     uint64_t updated_at;
-    uint16_t polling_ms;
     uint8_t length;
 } moving_average_config;
 
@@ -61,7 +60,6 @@ moving_average_config mv_config = {
     .values = {0},
     .length = MOVING_AVERAGE_N,
     .updated_at = 0,
-    .polling_ms = MOVING_AVERAGE_POLLING_MS,
 };
 
 void adc_sma_filter(moving_average_config* config) // simple moving average
