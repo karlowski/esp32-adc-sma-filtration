@@ -18,10 +18,12 @@
 #define MOVING_AVERAGE_POLLING_MS 20
 #define OPERATIONAL_STEP_MS 100
 #define LOGGER_THRESHOLD_MS 500
-#define SENSOR_THRESHOLD_MV 2400
+#define LDR_THRESHOLD_MV_OFF 2420
+#define LDR_THRESHOLD_MV_ON 2380
 
 uint64_t last_operation_at = 0;
 uint64_t last_log_at = 0;
+uint8_t led_level = 0;
 
 adc_oneshot_unit_handle_t adc_handle;
 adc_oneshot_unit_init_cfg_t adc_init_config = {
@@ -61,6 +63,21 @@ moving_average_config mv_config = {
     .length = MOVING_AVERAGE_N,
     .updated_at = 0,
 };
+
+void handle_led(uint8_t pin, float value_mv, uint8_t* level)
+{
+    if (value_mv >= LDR_THRESHOLD_MV_OFF)
+    {
+        *level = 0;
+    }
+    else if (value_mv <= LDR_THRESHOLD_MV_ON)
+    {
+        *level = 1;
+    }
+    
+    
+    gpio_set_level(pin, *level);
+}
 
 void adc_sma_filter(moving_average_config* config) // simple moving average
 {
@@ -108,8 +125,7 @@ void loop()
         last_operation_at = now;
 
         adc_sma_filter(&mv_config);
-        uint8_t led_level = mv_config.value_prev >= SENSOR_THRESHOLD_MV ? 0 : 1;
-        gpio_set_level(LED_PIN, led_level);
+        handle_led(LED_PIN, mv_config.value_prev, &led_level);
     }
 
     if ((now - last_log_at) >= LOGGER_THRESHOLD_MS)
