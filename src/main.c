@@ -18,8 +18,8 @@
 #define MOVING_AVERAGE_POLLING_MS 20
 #define OPERATIONAL_STEP_MS 100
 #define LOGGER_THRESHOLD_MS 500
-#define LDR_THRESHOLD_MV_OFF 2420
-#define LDR_THRESHOLD_MV_ON 2380
+#define LDR_THRESHOLD_MV_OFF 2300
+#define LDR_THRESHOLD_MV_ON 2400
 
 uint64_t last_operation_at = 0;
 uint64_t last_log_at = 0;
